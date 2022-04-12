@@ -38,7 +38,7 @@ public class HarrisAMRLinkedList {
             final Window window = find(key);
             final Node pred = window.pred;
             final Node curr = window.curr;
-            if (curr.key == key) {
+            if (curr.key != null && curr.key.equals(key)) {
                 return false;
             } else {
                 newNode.next.set(curr, false);
@@ -54,7 +54,7 @@ public class HarrisAMRLinkedList {
         while (true) {
             Window window = find(key);
             Node pred = window.pred, curr = window.curr;
-            if (curr.key != key) {
+            if (curr.key != null && !curr.key.equals(key)) {
                 return false;
             } else {
                 Node succ = curr.next.getReference();
@@ -91,7 +91,7 @@ public class HarrisAMRLinkedList {
                     succ = curr.next.get(marked);
                 }
 
-                if (curr == tail || key <= curr.key) {
+                if (curr.equals(tail) || key <= curr.key) {
                     return new Window(pred, curr);
                 }
                 pred = curr;
@@ -100,23 +100,31 @@ public class HarrisAMRLinkedList {
         }
     }
 
-    public boolean contains(Integer key) {
-        boolean[] marked = {false};
-        Node curr = head.next.getReference();
-        curr.next.get(marked);
-
-        while (curr != tail && key > curr.key) {
-            curr = curr.next.getReference();
-            curr.next.get(marked);
-        }
-        return (curr.key == key && !marked[0]);
-    }
 
     public void printSet() {
+        int n = 0;
         var reference = this.head.next.getReference();
         while (reference.key != null) {
             System.out.println(reference.key);
+            n++;
             reference = reference.next.getReference();
+            if (reference == null) {
+                break;
+            }
         }
+        System.out.printf("Count = %d%n", n);
+    }
+
+    public void printSetElementsCount() {
+        int n = 0;
+        var reference = this.head.next.getReference();
+        while (reference.key != null) {
+            n++;
+            reference = reference.next.getReference();
+            if (reference == null) {
+                break;
+            }
+        }
+        System.out.printf("Count = %d%n", n);
     }
 }
