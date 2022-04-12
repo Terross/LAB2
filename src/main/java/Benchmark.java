@@ -7,18 +7,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Benchmark {
     
-    private static final int ELEMENT_COUNT = 1 << 10;
-    private static final List<Integer> threadsCount = List.of(128);
+    private static final int ELEMENT_COUNT = Integer.MAX_VALUE;
+//    private static final List<Integer> threadsCount = List.of(512);
 
     public static void main(String[] args) throws InterruptedException {
-
+        List<Integer> threadsCount = List.of(Integer.parseInt(args[0]));
         for (Integer threads: threadsCount) {
             int totalAdd = 0;
             int totalRemove = 0;
+            HarrisAMRLinkedList harrisAMRLinkedList = new HarrisAMRLinkedList();
+            Random random1 = new Random();
+            for (int i = 0; i < 10000; i++) {
+                harrisAMRLinkedList.add(random1.nextInt(ELEMENT_COUNT));
+            }
+//            fillSet(harrisAMRLinkedList, 1);
             for (int k = 0; k < 1; k++) {
-                HarrisAMRLinkedList harrisAMRLinkedList = new HarrisAMRLinkedList();
 
-                fillSet(harrisAMRLinkedList, 1);
                 ExecutorService es = Executors.newFixedThreadPool(threads);
                 AtomicInteger addCount = new AtomicInteger(0);
                 AtomicInteger removeCount = new AtomicInteger(0);
@@ -43,13 +47,14 @@ public class Benchmark {
                 es.awaitTermination(1, TimeUnit.SECONDS);
                 totalAdd += addCount.get();
                 totalRemove += removeCount.get();
-                System.out.println(addCount.get());
-                System.out.println(removeCount.get());
+//                System.out.println(addCount.get());
+//                System.out.println(removeCount.get());
             }
 
             System.out.printf("Thread count = %d%n", threads);
-            System.out.printf("Add operations: %d%n", totalAdd/10);
-            System.out.printf("Remove operations: %d%n", totalRemove/10);
+//            System.out.printf("Add operations: %d%n", totalAdd/1);
+//            System.out.printf("Remove operations: %d%n", totalRemove/1);
+            System.out.println(totalAdd + totalRemove);
 //            harrisAMRLinkedList.printSetElementsCount();
 //            harrisAMRLinkedList.printSet();
         }
