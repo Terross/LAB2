@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
-public class HarrisAMRLinkedList {
+public class HarrisSet {
 
     final Node head;
     final Node tail;
@@ -25,7 +25,7 @@ public class HarrisAMRLinkedList {
         }
     }
 
-    public HarrisAMRLinkedList() {
+    public HarrisSet() {
         tail = new Node(null);
         head = new Node(null);
         head.next.set(tail, false);
@@ -36,9 +36,6 @@ public class HarrisAMRLinkedList {
         final Node newNode = new Node(key);
         while (true) {
             final Window window = find(key);
-            if (window == null) {
-                return false;
-            }
             final Node pred = window.pred;
             final Node curr = window.curr;
             if (curr.key != null && curr.key.equals(key)) {
@@ -56,9 +53,6 @@ public class HarrisAMRLinkedList {
     public boolean remove(int key) {
         while (true) {
             Window window = find(key);
-            if (window == null) {
-                return false;
-            }
             Node pred = window.pred, curr = window.curr;
             if (curr.key != null && !curr.key.equals(key)) {
                 return false;
@@ -88,11 +82,7 @@ public class HarrisAMRLinkedList {
             pred = head;
             curr = pred.next.getReference();
             while (true) {
-                if (curr == null) {
-                    return null;
-                }
                 succ = curr.next.get(marked);
-
                 while (marked[0]) {
                     if (!pred.next.compareAndSet(curr, succ, false, false)) {
                         continue retry;
@@ -100,7 +90,6 @@ public class HarrisAMRLinkedList {
                     curr = succ;
                     succ = curr.next.get(marked);
                 }
-
                 if (curr.equals(tail) || key <= curr.key) {
                     return new Window(pred, curr);
                 }
